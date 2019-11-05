@@ -1,0 +1,28 @@
+# Docker compose for development
+version: "3.3"
+services:
+  master-server:
+    build: ./master
+    image: maxjf1/kaldi-gstreamer-server-master
+    volumes:
+      - ./audio:/audio
+  worker-1:
+    build: ./worker
+    image: maxjf1/kaldi-gstreamer-server-worker
+    depends_on: 
+      - master-server
+    volumes:
+      - ./models:/opt/models
+    environment: 
+      YAML: /opt/models/laps-vox-sid-vdlclean.yaml
+      MASTER: master-server
+  worker-2:
+    build: ./worker
+    image: maxjf1/kaldi-gstreamer-server-worker
+    depends_on: 
+      - master-server
+    volumes:
+      - ./models:/opt/models
+    environment: 
+      YAML: /opt/models/laps-vox-sid-vdlclean.yaml
+      MASTER: master-server
